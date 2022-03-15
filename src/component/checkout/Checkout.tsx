@@ -1,4 +1,4 @@
-import {Fragment, useState} from 'react';
+import {Fragment, useState, useRef} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AddressForm from './AddressForm';
+import Order from './Order';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -23,6 +23,10 @@ import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector
 import { styled } from '@mui/material/styles';
 import { StepIconProps } from '@mui/material/StepIcon';
 import {payRequestPearlPay} from '../../config/api/pearlpay-biller'
+interface Props {
+    // rice: Array<Object>
+};
+
 function Copyright() {
     return (
         <Typography variant="body2" color="text.secondary" align="center">
@@ -79,15 +83,15 @@ function ColorlibStepIcon(props: StepIconProps) {
 }
 
 const steps = [
-    {label: 'Shipping address',icon: LocalShippingIcon},
+    {label: 'Order',icon: LocalShippingIcon},
     {label: 'Payment details',icon:CreditCardIcon},
     {label: 'Review your order',icon: RateReviewIcon}
 ];
 
-function getStepContent(step: number) {
+function getStepContent(step: number, products: Props,form: any) {
     switch (step) {
         case 0:
-            return <AddressForm />;
+            return <Order products={products} form={form}/>;
         case 1:
             return <PaymentForm />;
         case 2:
@@ -125,8 +129,48 @@ const theme = createTheme();
 
 export default function Checkout() {
     const [activeStep, setActiveStep] = useState(0);
+    const form = useRef(null);
+
+    const products = useState({
+        'rice': [
+            {name: 'Java Rice', price: 100},
+            {name: 'Adobo Rice', price: 200},
+            {name: 'Plain Rice', price: 150},
+            {name: 'Black Rice', price: 222},
+            {name: 'Brown Rice', price: 130},
+            {name: 'Grey Rice', price: 123}
+        ],
+        'dish': [
+            {name: 'Sinigang', price: 123},
+            {name: 'Adobo Rice', price: 222},
+            {name: 'Chicken', price: 332},
+            {name: 'Hotdog', price: 551},
+            {name: 'Tapa', price: 132},
+            {name: 'Lugaw', price: 123}
+        ],
+        'dessert': [
+            {name: 'Creme Caramel', price: 123},
+            {name: 'Strawberry Cake', price: 222},
+            {name: 'Cake', price: 332},
+            {name: 'Blueberry Cake', price: 551},
+            {name: '8 Texture Cake', price: 132},
+            {name: 'Coconut', price: 123}
+        ],
+        'drinks': [
+            {name: 'Lemon', price: 123},
+            {name: 'Mango', price: 222},
+            {name: 'Water', price: 332},
+            {name: 'Salt Water', price: 551},
+            {name: 'Peach', price: 132},
+            {name: 'Orange', price: 123}
+        ],
+    })
 
     const handleNext = () => {
+        if(form.current !== null){
+            console.log(form.current);
+        }
+
         if(activeStep === steps.length - 1) {
             const date = new Date();
             date.setFullYear(99,2,1);
@@ -191,7 +235,7 @@ export default function Checkout() {
                             </Fragment>
                         ) : (
                             <Fragment>
-                                {getStepContent(activeStep)}
+                                {getStepContent(activeStep, products, form)}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
