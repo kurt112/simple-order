@@ -4,8 +4,11 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-
-const PaymentForm = () => {
+interface Props {
+    changeDetails: any,
+    detail: any
+}
+const PaymentForm = ({changeDetails,detail}: Props) => {
     return  <Fragment>
         <Typography variant="h6" gutterBottom>
             Payment method
@@ -14,50 +17,38 @@ const PaymentForm = () => {
             <Grid item xs={12} md={6}>
                 <TextField
                     required
-                    id="cardName"
-                    label="Name on card"
+                    onChange={(e) => changeDetails('first_name', e.target.value)}
+                    value={detail.first_name}
+                    id="firstName"
+                    label="First Name"
                     fullWidth
-                    autoComplete="cc-name"
                     variant="standard"
                 />
             </Grid>
             <Grid item xs={12} md={6}>
                 <TextField
+                    onChange={(e) => changeDetails('last_name', e.target.value)}
+                    value={detail.last_name}
                     required
-                    id="cardNumber"
-                    label="Card number"
+                    id="lastName"
+                    label="Last Name"
                     fullWidth
-                    autoComplete="cc-number"
                     variant="standard"
                 />
             </Grid>
             <Grid item xs={12} md={6}>
                 <TextField
+                    onChange={(e) => changeDetails('cellphone', e.target.value)}
+                    value={detail.cellphone}
                     required
-                    id="expDate"
-                    label="Expiry date"
+                    id="cellphone"
+                    label="Mobile Number"
                     fullWidth
-                    autoComplete="cc-exp"
                     variant="standard"
                 />
             </Grid>
-            <Grid item xs={12} md={6}>
-                <TextField
-                    required
-                    id="cvv"
-                    label="CVV"
-                    helperText="Last three digits on signature strip"
-                    fullWidth
-                    autoComplete="cc-csc"
-                    variant="standard"
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <FormControlLabel
-                    control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-                    label="Remember credit card details for next time"
-                />
-            </Grid>
+
+
         </Grid>
     </Fragment>
 }

@@ -1,4 +1,4 @@
-import {Fragment, SyntheticEvent, useState} from 'react';
+import {Fragment, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -8,9 +8,10 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 interface Props {
     products: any,
-    form: any
-};
-const Order = ({products,form}: Props) => {
+    form: any,
+    getItem: any
+}
+const Order = ({products,form,getItem}: Props) => {
     const rices = useState(products[0].rice);
     const desserts = useState(products[0].dessert);
     const dishes = useState(products[0].dish);
@@ -31,8 +32,9 @@ const Order = ({products,form}: Props) => {
                         name="rice"
                     >
                         {
-                            rices[0].map((rice: any,) =>{
+                            rices[0].map((rice: any,index:number) =>{
                                 return <FormControlLabel
+                                    onClick={() => getItem('rice', index)}
                                     key={rice.name}
                                     value={rice.name}
                                     control={<Radio />}
@@ -52,12 +54,13 @@ const Order = ({products,form}: Props) => {
                         name="dish"
                     >
                         {
-                            dishes[0].map((rice: any,) =>{
+                            dishes[0].map((dish: any, index:number) =>{
                                 return <FormControlLabel
-                                    key={rice.name}
-                                    value={rice.name}
+                                    onClick={() => getItem('dish',index)}
+                                    key={dish.name}
+                                    value={dish.name}
                                     control={<Radio />}
-                                    label={`${rice.name} - (${rice.price})`} />
+                                    label={`${dish.name} - (${dish.price})`} />
                             })
                         }
 
@@ -73,12 +76,13 @@ const Order = ({products,form}: Props) => {
                         name="drinks"
                     >
                         {
-                            drinks[0].map((rice: any,) =>{
+                            drinks[0].map((drink: any,index:number) =>{
                                 return <FormControlLabel
-                                    key={rice.name}
-                                    value={rice.name}
+                                    onClick={() => getItem('drinks',index)}
+                                    key={drink.name}
+                                    value={drink.name}
                                     control={<Radio />}
-                                    label={`${rice.name} - (${rice.price})`} />
+                                    label={`${drink.name} - (${drink.price})`} />
                             })
                         }
 
@@ -94,8 +98,9 @@ const Order = ({products,form}: Props) => {
                         name="dessert"
                     >
                         {
-                            desserts[0].map((rice: any,) =>{
+                            desserts[0].map((rice: any, index: number) =>{
                                 return <FormControlLabel
+                                    onClick={() => getItem('dessert',index)}
                                     key={rice.name}
                                     value={rice.name}
                                     control={<Radio />}

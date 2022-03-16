@@ -26,6 +26,7 @@ import {payRequestPearlPay} from '../../config/api/pearlpay-biller'
 interface Props {
     // rice: Array<Object>
 };
+const number = Math.floor((Math.random() * 1000000) + 1);
 
 function Copyright() {
     return (
@@ -88,15 +89,17 @@ const steps = [
     {label: 'Review your order',icon: RateReviewIcon}
 ];
 
-function getStepContent(step: number, products: Props,form: any) {
+function getStepContent(step: number, products: Props, form: any, getItem: any, orders: any, total: number,changeDetails: any, detail:any) {
     switch (step) {
         case 0:
-            return <Order products={products} form={form}/>;
+            // @ts-ignore
+            return <Order products={products} form={form} getItem={getItem} />;
         case 1:
-            return <PaymentForm />;
+            return <PaymentForm changeDetails={changeDetails} detail={detail}/>;
         case 2:
-            return <Review />;
+            return <Review items={orders} total={total} detail={detail} number={number}/>;
         default:
+            // @ts-ignore
             throw new Error('Unknown step');
     }
 }
@@ -121,7 +124,7 @@ const ColorlibStepIconRoot = styled('div')<{
     ...(ownerState.completed && {
         backgroundImage:
             'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-    }),
+    })
 }));
 
 
@@ -129,42 +132,87 @@ const theme = createTheme();
 
 export default function Checkout() {
     const [activeStep, setActiveStep] = useState(0);
-    const form = useRef(null);
+    const [items, setItem] = useState({});
+    const [orders, setOrder] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [detail,setDetail] = useState({
+        first_name: '',
+        last_name: '',
+        cellphone: ''
+    })
 
+    const form = useRef(null);
     const products = useState({
         'rice': [
-            {name: 'Java Rice', price: 100},
-            {name: 'Adobo Rice', price: 200},
-            {name: 'Plain Rice', price: 150},
-            {name: 'Black Rice', price: 222},
-            {name: 'Brown Rice', price: 130},
-            {name: 'Grey Rice', price: 123}
+            {name: 'Java Rice', price: 100, desc: '+10 In Java Coding'},
+            {name: 'Adobo Rice', price: 200, desc: 'Types Of Rice'},
+            {name: 'Plain Rice', price: 150, desc: 'Types Of Rice'},
+            {name: 'Black Rice', price: 222, desc: 'Types Of Rice'},
+            {name: 'Brown Rice', price: 130, desc: 'Types Of Rice'},
+            {name: 'Grey Rice', price: 123, desc: 'Types Of Rice'}
         ],
         'dish': [
-            {name: 'Sinigang', price: 123},
-            {name: 'Adobo Rice', price: 222},
-            {name: 'Chicken', price: 332},
-            {name: 'Hotdog', price: 551},
-            {name: 'Tapa', price: 132},
-            {name: 'Lugaw', price: 123}
+            {name: 'Sinigang', price: 123, desc: 'Types Of Dish'},
+            {name: 'Adobo Rice', price: 222, desc: 'Types Of Dish'},
+            {name: 'Chicken', price: 332, desc: 'Types Of Dish'},
+            {name: 'Hotdog', price: 551, desc: 'Types Of Dish'},
+            {name: 'Tapa', price: 132, desc: 'Types Of Dish'},
+            {name: 'Lugaw', price: 123, desc: 'Types Of Dish'}
         ],
         'dessert': [
-            {name: 'Creme Caramel', price: 123},
-            {name: 'Strawberry Cake', price: 222},
-            {name: 'Cake', price: 332},
-            {name: 'Blueberry Cake', price: 551},
-            {name: '8 Texture Cake', price: 132},
-            {name: 'Coconut', price: 123}
+            {name: 'Creme Caramel', price: 123, desc: 'Types Of Dessert'},
+            {name: 'Strawberry Cake', price: 222, desc: 'Types Of Dessert'},
+            {name: 'Cake', price: 332, desc: 'Types Of Dessert'},
+            {name: 'Blueberry Cake', price: 551, desc: 'Types Of Dessert'},
+            {name: '8 Texture Cake', price: 132, desc: 'Types Of Dessert'},
+            {name: 'Coconut', price: 123, desc: 'Types Of Dessert'}
         ],
         'drinks': [
-            {name: 'Lemon', price: 123},
-            {name: 'Mango', price: 222},
-            {name: 'Water', price: 332},
-            {name: 'Salt Water', price: 551},
-            {name: 'Peach', price: 132},
-            {name: 'Orange', price: 123}
-        ],
+            {name: 'Lemon', price: 123, desc: 'Types Of Water'},
+            {name: 'Mango', price: 222, desc: 'Types Of Water'},
+            {name: 'Water', price: 332, desc: 'Types Of Water'},
+            {name: 'Salt Water', price: 551, desc: 'Types Of Water'},
+            {name: 'Peach', price: 132, desc: 'Types Of Water'},
+            {name: 'Orange', price: 123,desc: 'Types Of Water'}
+        ]
     })
+
+    const changeDetails = (name: any, text: String) => {
+        const current = {...detail};
+
+        // @ts-ignore
+        current[name] = text;
+        setDetail(current);
+    }
+
+    const getItem = (name:any, index:any) => {
+
+        const product = products[0]
+        const currentState = {...items};
+        // @ts-ignore
+        const productTypes = product[name];
+
+        // @ts-ignore
+        const singleProduct = productTypes[index];
+
+        // @ts-ignore
+        currentState[name] = singleProduct
+        setItem(currentState);
+        // @ts-ignore
+        const temp = [];
+        let total = 0;
+
+        Object.keys(currentState).map(key => {
+            // @ts-ignore
+            const product = currentState[key];
+            temp.push(product);
+            total += product.price;
+
+        });
+        // @ts-ignore
+        setOrder(temp);
+        setTotal(total)
+    }
 
     const handleNext = () => {
         if(form.current !== null){
@@ -174,7 +222,7 @@ export default function Checkout() {
         if(activeStep === steps.length - 1) {
             const date = new Date();
             date.setFullYear(99,2,1);
-            payRequestPearlPay(400,'food','hotdog','096177134338','',{name: 'asdfasdf'},new URL('https://simple-order-64158.web.app/'))
+            payRequestPearlPay(total,`${number}`,`${detail.first_name} ${detail.last_name}`,`${detail.cellphone}`,'',{name: 'asdfasdf'},new URL('https://simple-order-64158.web.app/'))
                 .then(result => {
                     console.log(result)
                 });
@@ -235,7 +283,7 @@ export default function Checkout() {
                             </Fragment>
                         ) : (
                             <Fragment>
-                                {getStepContent(activeStep, products, form)}
+                                {getStepContent(activeStep, products, form,getItem, orders, total,changeDetails,detail)}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
