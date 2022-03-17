@@ -1,4 +1,4 @@
-import {Fragment, useState} from 'react';
+import {FC, Fragment} from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -6,24 +6,33 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-interface Props {
-    products: any,
-    form: any,
-    getItem: any
+interface content {
+    name: string,
+    price: number,
+    desc: string
 }
-const Order = ({products,form,getItem}: Props) => {
-    const rices = useState(products[0].rice);
-    const desserts = useState(products[0].dessert);
-    const dishes = useState(products[0].dish);
-    const drinks = useState(products[0].drinks);
 
+interface product {
+    rice: content[],
+    dish: content[],
+    drinks: content[],
+    dessert: content[]
+}
+
+interface Content {
+    products: product,
+    getItem: (name:string, index: number) => void
+}
+const Order: FC<Content> = ({products,getItem}) => {
+
+    const {rice,dish,drinks,dessert} = products
 
     return <Fragment>
         <Typography variant="h6" gutterBottom>
             Online Shop
         </Typography>
         <Grid container >
-            <FormControl ref={form}>
+            <FormControl>
                 <Grid item md={12} style={{textAlign: 'left'}} >
                     <FormLabel  id="rice">RICE</FormLabel>
                     <RadioGroup
@@ -32,7 +41,7 @@ const Order = ({products,form,getItem}: Props) => {
                         name="rice"
                     >
                         {
-                            rices[0].map((rice: any,index:number) =>{
+                            rice.map((rice: any,index:number) =>{
                                 return <FormControlLabel
                                     onClick={() => getItem('rice', index)}
                                     key={rice.name}
@@ -54,7 +63,7 @@ const Order = ({products,form,getItem}: Props) => {
                         name="dish"
                     >
                         {
-                            dishes[0].map((dish: any, index:number) =>{
+                            dish.map((dish: any, index:number) =>{
                                 return <FormControlLabel
                                     onClick={() => getItem('dish',index)}
                                     key={dish.name}
@@ -76,7 +85,7 @@ const Order = ({products,form,getItem}: Props) => {
                         name="drinks"
                     >
                         {
-                            drinks[0].map((drink: any,index:number) =>{
+                            drinks.map((drink: any,index:number) =>{
                                 return <FormControlLabel
                                     onClick={() => getItem('drinks',index)}
                                     key={drink.name}
@@ -98,7 +107,7 @@ const Order = ({products,form,getItem}: Props) => {
                         name="dessert"
                     >
                         {
-                            desserts[0].map((rice: any, index: number) =>{
+                            dessert.map((rice: any, index: number) =>{
                                 return <FormControlLabel
                                     onClick={() => getItem('dessert',index)}
                                     key={rice.name}

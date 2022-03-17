@@ -1,4 +1,4 @@
-import {Fragment, useState, useRef} from 'react';
+import {Fragment, ReactElement, useRef, useState} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -11,7 +11,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {createTheme, styled, ThemeProvider} from '@mui/material/styles';
 import Order from './Order';
 import PaymentForm from './PaymentForm';
 import Review from './Review';
@@ -19,13 +19,23 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import Stack from '@mui/material/Stack';
-import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
-import { styled } from '@mui/material/styles';
-import { StepIconProps } from '@mui/material/StepIcon';
+import StepConnector, {stepConnectorClasses} from '@mui/material/StepConnector';
+import {StepIconProps} from '@mui/material/StepIcon';
 import {payRequestPearlPay} from '../../config/api/pearlpay-biller'
-interface Props {
-    // rice: Array<Object>
-};
+
+interface content {
+    name: string,
+    price: number,
+    desc: string
+}
+
+interface product {
+    rice: content[],
+    dish: content[],
+    drinks: content[],
+    dessert: content[]
+}
+
 const number = Math.floor((Math.random() * 1000000) + 1);
 
 function Copyright() {
@@ -70,7 +80,7 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
 function ColorlibStepIcon(props: StepIconProps) {
     const { active, completed, className } = props;
 
-    const icons: { [index: string]: React.ReactElement } = {
+    const icons: { [index: string]: ReactElement } = {
         1:  <LocalShippingIcon />,
         2:  <CreditCardIcon />,
         3:  <RateReviewIcon />,
@@ -89,11 +99,11 @@ const steps = [
     {label: 'Review your order',icon: RateReviewIcon}
 ];
 
-function getStepContent(step: number, products: Props, form: any, getItem: any, orders: any, total: number,changeDetails: any, detail:any) {
+function getStepContent(step: number, products: product, getItem: any, orders: any, total: number,changeDetails: any, detail:any) {
     switch (step) {
         case 0:
             // @ts-ignore
-            return <Order products={products} form={form} getItem={getItem} />;
+            return <Order products={products} getItem={getItem} />;
         case 1:
             return <PaymentForm changeDetails={changeDetails} detail={detail}/>;
         case 2:
@@ -131,7 +141,7 @@ const ColorlibStepIconRoot = styled('div')<{
 const theme = createTheme();
 
 export default function Checkout() {
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState<number>(0);
     const [items, setItem] = useState({});
     const [orders, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
@@ -142,7 +152,7 @@ export default function Checkout() {
     })
 
     const form = useRef(null);
-    const products = useState({
+    const [products] = useState<product>({
         'rice': [
             {name: 'Java Rice', price: 100, desc: '+10 In Java Coding'},
             {name: 'Adobo Rice', price: 200, desc: 'Types Of Rice'},
@@ -185,31 +195,25 @@ export default function Checkout() {
         setDetail(current);
     }
 
-    const getItem = (name:any, index:any) => {
+    const getItem = (name:string, index:number) => {
 
-        const product = products[0]
-        const currentState = {...items};
-        // @ts-ignore
-        const productTypes = product[name];
+        const currentState:Object = {...items};
 
-        // @ts-ignore
-        const singleProduct = productTypes[index];
+        const productTypes = Object(products)[name];
 
-        // @ts-ignore
-        currentState[name] = singleProduct
+        Object(currentState)[name] = productTypes[index]
         setItem(currentState);
-        // @ts-ignore
-        const temp = [];
+        const temp:any = [];
         let total = 0;
 
+        // eslint-disable-next-line array-callback-return
         Object.keys(currentState).map(key => {
-            // @ts-ignore
-            const product = currentState[key];
+            const product = Object(currentState)[key];
             temp.push(product);
             total += product.price;
 
         });
-        // @ts-ignore
+
         setOrder(temp);
         setTotal(total)
     }
@@ -283,7 +287,7 @@ export default function Checkout() {
                             </Fragment>
                         ) : (
                             <Fragment>
-                                {getStepContent(activeStep, products, form,getItem, orders, total,changeDetails,detail)}
+                                {getStepContent(activeStep, products,getItem, orders, total,changeDetails,detail)}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
