@@ -22,7 +22,7 @@ import Stack from '@mui/material/Stack';
 import StepConnector, {stepConnectorClasses} from '@mui/material/StepConnector';
 import {StepIconProps} from '@mui/material/StepIcon';
 import {payRequestPearlPay} from '../../config/api/pearlpay-biller'
-
+import LinearProgress from '@mui/material/LinearProgress';
 interface content {
     name: string,
     price: number,
@@ -99,7 +99,7 @@ const steps = [
     {label: 'Review your order',icon: RateReviewIcon}
 ];
 
-function getStepContent(step: number, products: product, getItem: any, orders: any, total: number,changeDetails: any, detail:any) {
+function getStepContent(step: number, products: product, getItem: any, orders: any, total: number,changeDetails: any, detail:any, loading: any) {
     switch (step) {
         case 0:
             // @ts-ignore
@@ -107,7 +107,7 @@ function getStepContent(step: number, products: product, getItem: any, orders: a
         case 1:
             return <PaymentForm changeDetails={changeDetails} detail={detail}/>;
         case 2:
-            return <Review items={orders} total={total} detail={detail} number={number}/>;
+            return <Review items={orders} total={total} detail={detail} number={number} loading={loading}/>;
         default:
             // @ts-ignore
             throw new Error('Unknown step');
@@ -150,8 +150,8 @@ export default function Checkout() {
         last_name: '',
         cellphone: ''
     })
+    const [loading,setLoading] = useState(false);
 
-    const form = useRef(null);
     const [products] = useState<product>({
         'rice': [
             {name: 'Java Rice', price: 100, desc: '+10 In Java Coding'},
@@ -218,17 +218,15 @@ export default function Checkout() {
         setTotal(total)
     }
 
-    const handleNext = () => {
-        if(form.current !== null){
-            console.log(form.current);
-        }
+    const handleNext = async () => {
 
         if(activeStep === steps.length - 1) {
+            setLoading(true);
             const date = new Date();
             date.setFullYear(99,2,1);
-            payRequestPearlPay(total,`${number}`,`${detail.first_name} ${detail.last_name}`,`${detail.cellphone}`,'',{name: 'asdfasdf'},new URL('https://simple-order-64158.web.app/'))
-                .then(result => {
-                    console.log(result)
+            await payRequestPearlPay(total,`${number}`,`${detail.first_name} ${detail.last_name}`,`${detail.cellphone}`,'',{name: 'asdfasdf'},new URL('https://simple-order-64158.web.app/'))
+                .then(ignored => {
+                    setLoading(false);
                 });
             return;
         }
@@ -243,6 +241,7 @@ export default function Checkout() {
 
     return (
         <ThemeProvider theme={theme}>
+
             <CssBaseline />
             <AppBar
                 position="absolute"
@@ -287,7 +286,7 @@ export default function Checkout() {
                             </Fragment>
                         ) : (
                             <Fragment>
-                                {getStepContent(activeStep, products,getItem, orders, total,changeDetails,detail)}
+                                {getStepContent(activeStep, products,getItem, orders, total,changeDetails,detail,loading)}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     {activeStep !== 0 && (
                                         <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>

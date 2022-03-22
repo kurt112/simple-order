@@ -44,10 +44,10 @@ const Order: FC<Content> = ({products,getItem}) => {
                             rice.map((rice: any,index:number) =>{
                                 return <FormControlLabel
                                     onClick={() => getItem('rice', index)}
-                                    key={rice.name}
+                                    key={rice.name+index}
                                     value={rice.name}
                                     control={<Radio />}
-                                    label={`${rice.name} - (${rice.price})`} />
+                                    label={`${rice.name} - ₱(${rice.price})`} />
                             })
                         }
 
@@ -69,7 +69,7 @@ const Order: FC<Content> = ({products,getItem}) => {
                                     key={dish.name}
                                     value={dish.name}
                                     control={<Radio />}
-                                    label={`${dish.name} - (${dish.price})`} />
+                                    label={`${dish.name} - ₱(${dish.price})`} />
                             })
                         }
 
@@ -91,7 +91,7 @@ const Order: FC<Content> = ({products,getItem}) => {
                                     key={drink.name}
                                     value={drink.name}
                                     control={<Radio />}
-                                    label={`${drink.name} - (${drink.price})`} />
+                                    label={`${drink.name} - ₱(${drink.price})`} />
                             })
                         }
 
@@ -113,7 +113,7 @@ const Order: FC<Content> = ({products,getItem}) => {
                                     key={rice.name}
                                     value={rice.name}
                                     control={<Radio />}
-                                    label={`${rice.name} - (${rice.price})`} />
+                                    label={`${rice.name} - ₱(${rice.price})`} />
                             })
                         }
 

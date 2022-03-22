@@ -4,8 +4,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
+import LinearProgress from "@mui/material/LinearProgress";
 
-const addresses = ['1 MUI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
 const payments = [
     { name: 'PearlPay', detail: 'PearlPay' }
 ];
@@ -19,6 +19,8 @@ const Review = (items: any) => {
         <Typography variant="h2" gutterBottom>
             {items.number}
         </Typography>
+        {items.loading? <LinearProgress />: null}
+        <br/>
         <List disablePadding>
             {items.items.map((item:any) => (
                 <ListItem key={item.name} sx={{ py: 1, px: 0 }}>
@@ -29,7 +31,7 @@ const Review = (items: any) => {
             <ListItem sx={{ py: 1, px: 0 }}>
                 <ListItemText primary="Total" />
                 <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                    {items.total}
+                    {'₱ ' +items.total}
                 </Typography>
             </ListItem>
         </List>

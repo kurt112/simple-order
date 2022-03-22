@@ -9,7 +9,7 @@ interface Props {
 const PaymentForm = ({changeDetails,detail}: Props) => {
     return  <Fragment>
         <Typography variant="h6" gutterBottom>
-            Payment method
+            Payment Details
         </Typography>
         <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
@@ -34,7 +34,7 @@ const PaymentForm = ({changeDetails,detail}: Props) => {
                     variant="standard"
                 />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
                 <TextField
                     onChange={(e) => changeDetails('cellphone', e.target.value)}
                     value={detail.cellphone}
